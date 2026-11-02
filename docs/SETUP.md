@@ -2,11 +2,31 @@
 
 ## Установка
 
-Бюджет лабораторной предполагает уже установленный работающий Docker и основы Python/SQL. Ниже приведены инструкции для тех, кто готовит компьютер заранее. Само знакомство с Redis входит во время задания.
+Бюджет задания предполагает уже установленный работающий Docker и основы Python/SQL. Ниже приведены инструкции для тех, кто готовит компьютер заранее. Само знакомство с Redis входит во время задания.
 
-Windows: установите Docker Desktop с Linux containers и WSL2, откройте PowerShell в каталоге проекта. macOS: установите и запустите Docker Desktop либо используйте уже настроенную Colima с Docker и Compose. Linux: установите Docker Engine и плагин Compose из инструкции Docker для своего дистрибутива, запустите daemon и настройте доступ своего пользователя к нему. Команды лабораторной одинаковы на трёх системах.
+Установите [Git](https://git-scm.com/downloads) и редактор, в котором удобно менять Python и Markdown, например [VS Code](https://code.visualstudio.com/). Нужен аккаунт GitHub для собственной копии и сдачи. Устанавливать Python, Redis, PostgreSQL или pytest на компьютер отдельно не требуется.
 
-Проверьте docker version и docker compose version. Должны отвечать и Client, и Server. Старый docker-compose v1 не поддерживается. Если установлен новый Compose как отдельный исполняемый файл docker-compose, команды с ним эквивалентны, но в документации используется стандартный плагин docker compose.
+Windows: установите [Docker Desktop](https://docs.docker.com/desktop/setup/install/windows-install/) с Linux containers и WSL2, откройте PowerShell в каталоге проекта. macOS: установите [Docker Desktop](https://docs.docker.com/desktop/setup/install/mac-install/) либо используйте уже настроенную Colima с Docker и Compose. Linux: установите [Docker Engine](https://docs.docker.com/engine/install/) и [плагин Compose](https://docs.docker.com/compose/install/linux/) для своего дистрибутива, запустите daemon и настройте доступ своего пользователя к нему.
+
+## Получение своей копии
+
+1. Откройте [репозиторий задания](https://github.com/mperestoronin/concurrent-booking-lab), войдите в GitHub и нажмите Fork, затем Create fork. Владелец новой копии должен совпадать с вашим аккаунтом. Оставьте имя concurrent-booking-lab.
+2. Откройте терминал в папке для учебных проектов. В следующем адресе замените YOUR_GITHUB_LOGIN своим логином. Если назвали Fork иначе, возьмите его HTTPS-адрес через кнопку Code на его странице.
+
+```sh
+git clone https://github.com/YOUR_GITHUB_LOGIN/concurrent-booking-lab.git
+cd concurrent-booking-lab
+git switch -c solution/booking
+git remote -v
+git rev-parse HEAD
+```
+
+3. В выводе remote адрес origin должен указывать на ваш Fork. Последняя команда выводит commit исходной заготовки; сохраните его в REPORT.md. Ветку solution/booking создайте один раз, затем продолжайте работу в ней.
+4. Откройте эту папку в редакторе. Все команды Docker и тестов выполняйте в ней, где находится compose.yaml. Вводить их в консоли Python или внутри интерактивной SQL-консоли не нужно.
+
+## Сборка и первый запуск
+
+Выполните git --version, docker version и docker compose version. Docker должен показать сведения и о Client, и о Server. Старый docker-compose v1 не поддерживается. Если установлен новый Compose как отдельный исполняемый файл docker-compose, команды с ним эквивалентны, но в документации используется стандартный плагин docker compose.
 
 ```sh
 docker compose up --build -d
@@ -14,7 +34,9 @@ docker compose ps
 docker compose logs --tail=50 app
 ```
 
-Первая сборка скачивает образы и Python-зависимости из интернета. Дальнейшая работа не требует внешних API или аккаунтов. Закреплены Python 3.12.13, PostgreSQL 16.13, Redis 7.4.8 и версии Python-пакетов. Docker-теги фиксируют выпуск, но могут получать пересборки базового образа; строгая побайтовая воспроизводимость потребовала бы digest и зеркала пакетов.
+Флаг --build собирает образ из сохранённых файлов, -d оставляет контейнеры работать в фоне. В ps дождитесь healthy у app, postgres и redis. Затем откройте [документацию API](http://127.0.0.1:8080/docs). Для ручного запроса выберите маршрут, нажмите Try it out, заполните JSON и нажмите Execute. В ответе будут HTTP-код и тело. Для первого последовательного примера можно выполнить docker compose exec app python -m scripts.demo --resource 1.
+
+Первая сборка скачивает образы и Python-зависимости из интернета. Сам сервис не обращается к внешним API; GitHub нужен для получения и сдачи кода. Закреплены Python 3.12.13, PostgreSQL 16.13, Redis 7.4.8 и версии Python-пакетов. Docker-теги фиксируют выпуск, но могут получать пересборки базового образа; строгая побайтовая воспроизводимость потребовала бы digest и зеркала пакетов.
 
 ## Запросы на Windows
 
